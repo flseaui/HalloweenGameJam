@@ -73,8 +73,8 @@ public class MainView extends EnigView {
 		mainTheme = new Sound("res/mainTheme.wav");
 		soundSource.setLoop();
 		soundSource.playSound(mainTheme);
-		Map.wallTexture = new Texture("res/sprites/tiles/brick_wall.png");
-		Map.floorTexture = new Texture("res/sprites/tiles/tile_floor_0.png");
+		Map.wallTexture = new Texture("res/sprites/tiles/stone_wall.png");
+		Map.floorTexture = new Texture("res/sprites/tiles/dark_oak_floor.png");
 	}
 	
 	@Override
