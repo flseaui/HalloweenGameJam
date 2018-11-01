@@ -18,10 +18,11 @@ public class MainView extends EnigView {
 	public static Matrix4f perspectiveMatrix;
 	
 	public static Player mainPlayer;
+	public static Map mainMap;
+	
 	public static Texture[] playerTex;
 	
 	public static int frame;
-	
 	public static float aspectRatio;
 	
 	public MainView(EnigWindow window) {
@@ -30,7 +31,10 @@ public class MainView extends EnigView {
 		playerVAO = new VAO(-5, -5, 10, 10);
 		perspectiveMatrix = window.getSquarePerspectiveMatrix(150f);
 		mainPlayer = new Player();
-		playerTex = new Texture[]{new Texture("res/sprites/player/player0.png"), new Texture("res/sprites/player/player1.png")};
+		mainMap = new Map("res/levels/level0.png");
+		playerTex = new Texture[] {new Texture("res/sprites/player/player0.png"), new Texture("res/sprites/player/player1.png")};
+		Child.childTex = new Texture[] {new Texture("res/sprites/child/idle/idle_0.png"), new Texture("res/sprites/child/idle/idle_1.png"), new Texture("res/sprites/child/idle/idle_2.png"), new Texture("res/sprites/child/idle/idle_2.png")};
+		Parent.tex = new Texture("res/sprites/parent/walk_down/walk_down_0.png");
 	}
 	
 	@Override
@@ -48,11 +52,11 @@ public class MainView extends EnigView {
 	}
 	
 	/**
-	 * @author Emmett
+	 * @author (Emmett / sqrt(Emmett))^2
 	 * 
 	 * sets the aspect ratio of the game
 	 * 
-	 * @param aspect - the got damn ratio
+	 * @param aspect aspect ratio
 	 */
 	public static void setAspectRatio(float aspect) {
 		aspectRatio = aspect;
@@ -61,8 +65,17 @@ public class MainView extends EnigView {
 	private void renderScene() {
 		FBO.prepareDefaultRender();
 		textureShader.enable();
-		playerTex[(2 * frame / window.fps % 2)].bind();
+		playerTex[Math.abs(2 * frame / window.fps % 2)].bind();
 		textureShader.shaders[0].uniforms[0].set(new Matrix4f(perspectiveMatrix).translate(mainPlayer.x * 10f, mainPlayer.y * 10f, 0));
+		
+		playerVAO.prepareRender();
+		playerVAO.drawTriangles();
+		Parent.renderParents(mainMap.parents, playerVAO);
+		Child.renderParents(mainMap.children, playerVAO);
+		playerVAO.unbind();
+		
+		//Math.abs(3 * frame / window.fps % 4 - 1)
+		
 		
 		float windowRatio = (float)window.getWidth() / window.getHeight();
 		boolean fullWidth;
@@ -84,8 +97,6 @@ public class MainView extends EnigView {
 		} else {
 			ebetSetSize((int)Math.round(window.getWidth()/2 - frameWidth/2), 0, frameWidth, frameHeight);
 		}
-		
-		playerVAO.fullRender();
 	}
 	
 	public static Matrix4f getPerspectiveMatrix() {
