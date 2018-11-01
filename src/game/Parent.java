@@ -10,7 +10,6 @@ public class Parent {
 	public int x;
 	public int y;
 	public float radius;
-	Random random = new Random();
 	
 	public static Texture tex;
 	
@@ -29,29 +28,6 @@ public class Parent {
 			}*/
 		}
 		return false;
-	}
-
-	public void moveParent(Map m)
-	{
-		int movement = random.nextInt(1);
-		int axis = random.nextInt(1);
-		int direction = random.nextInt(1);
-
-		if (direction == 0)
-		{
-			movement = -movement;
-		}
-
-		if (axis == 0)
-		{
-			if (m.solid[x + movement][y])
-				x += movement;
-		}
-		else
-		{
-			if (m.solid[x][y + movement])
-				y += movement;
-		}
 	}
 
 	public void move(Map m) {

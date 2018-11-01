@@ -6,7 +6,17 @@ public class Player {
 	int x = 0;
 	int y = 0;
 	int animFrame;
+
+	private boolean lockMovement;
+
+	public void kill()
+	{
+		lockMovement = true;
+	}
+
 	public void checkMovement(EnigWindow window) {
+		if (lockMovement) return;
+
 		if (UserControls.up(window)) {
 			y += 1;
 		}

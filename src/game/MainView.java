@@ -33,6 +33,7 @@ public class MainView extends EnigView {
 
 	public Sound mainTheme;
 	public Sound gameOverTheme;
+	public Sound victoryTheme;
 
 	public SoundSource soundSource;
 
@@ -41,7 +42,7 @@ public class MainView extends EnigView {
 	public static float aspectRatio;
 
 	public boolean carTime;
-	public int carX, carY;
+	public static int carX, carY;
 
 	
 	public static Vector2f camPos = new Vector2f();
@@ -72,6 +73,7 @@ public class MainView extends EnigView {
 		soundSource = new SoundSource();
 		gameOverTheme = new Sound("res/bustTheme.wav");
 		mainTheme = new Sound("res/mainTheme.wav");
+		victoryTheme = new Sound("res/victoryTheme.wav");
 		soundSource.setLoop();
 		soundSource.playSound(mainTheme);
 		Map.wallTexture = new Texture("res/sprites/tiles/stone_wall.png");
@@ -105,11 +107,13 @@ public class MainView extends EnigView {
 			}
 		}
 
-		if (UserControls.test(window))
-			if (KillCounter.deaths >= 9)
+		for (Parent parent : mainMap.parents)
+		{
+			if (mainPlayer.x == parent.x && mainPlayer.y == parent.y) {
+				mainPlayer.kill();
 				gameOver();
-			else
-				KillCounter.deaths++;
+			}
+		}
 
 		renderScene();
 
@@ -132,14 +136,16 @@ public class MainView extends EnigView {
 
 	public void win()
 	{
-
+		soundSource.stop();
+		soundSource.setLoop();
+		soundSource.playSound(victoryTheme);
 	}
 
 	public void gameOver()
 	{
 
-		carX = mainPlayer.x * 10 - 30;
-		carY = mainPlayer.y * 10 - 15;
+		carX = mainPlayer.x * 10 - 30 + (int) camPos.x;
+		carY = mainPlayer.y * 10 - 15 + (int) camPos.y;
 
 		soundSource.stop();
 		soundSource.setNoLoop();
@@ -214,6 +220,8 @@ public class MainView extends EnigView {
 		if (w.keys[cright] > 0) {
 			camPos.x -= SPEED;
 		}
+		carX = mainPlayer.x * 10 - 30 + (int) camPos.x;
+		carY = mainPlayer.y * 10 - 15 + (int) camPos.y;
 	}
 
 	public static Matrix4f getPerspectiveMatrix() {
