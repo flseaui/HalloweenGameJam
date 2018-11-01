@@ -14,7 +14,6 @@ public class Map {
 	
 	public Child[] children;
 	public Parent[] parents;
-	public Player ghost;
 	
 	public static final int[][] tileReference = {
 			
