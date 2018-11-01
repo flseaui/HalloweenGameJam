@@ -24,7 +24,7 @@ public class MainView extends EnigView {
 	public static Player mainPlayer;
 	public static Map mainMap;
 
-	public static DeathCounter deathCounter;
+	public static KillCounter deathCounter;
 
 	public static Texture[] playerTex;
 	public static Texture ghostBustersCar;
@@ -46,14 +46,14 @@ public class MainView extends EnigView {
 		perspectiveMatrix = window.getSquarePerspectiveMatrix(150f);
 		mainPlayer = new Player();
 		mainMap = new Map("res/levels/level0.png");
-		deathCounter = new DeathCounter();
+		deathCounter = new KillCounter();
 		playerTex = new Texture[] {new Texture("res/sprites/player/player0.png"), new Texture("res/sprites/player/player1.png")};
 		ghostBustersCar = new Texture("res/sprites/ghostbusters_car.png");
 		Child.childTex = new Texture[] {new Texture("res/sprites/child/idle/idle_0.png"), new Texture("res/sprites/child/idle/idle_1.png"), new Texture("res/sprites/child/idle/idle_2.png"), new Texture("res/sprites/child/idle/idle_2.png")};
 		Parent.tex = new Texture("res/sprites/parent/walk_down/walk_down_0.png");
-		DeathCounter.timesTexture = new Texture("res/sprites/ui/kill_count/times.png");
-		DeathCounter.iconTexture = new Texture("res/sprites/ui/kill_count/icon.png");
-		DeathCounter.counterTextures = new Texture[] { new Texture("res/sprites/ui/kill_count/0.png"), new Texture("res/sprites/ui/kill_count/1.png"), new Texture("res/sprites/ui/kill_count/2.png"), new Texture("res/sprites/ui/kill_count/3.png"), new Texture("res/sprites/ui/kill_count/4.png"), new Texture("res/sprites/ui/kill_count/5.png"), new Texture("res/sprites/ui/kill_count/6.png"), new Texture("res/sprites/ui/kill_count/7.png"), new Texture("res/sprites/ui/kill_count/8.png"), new Texture("res/sprites/ui/kill_count/9.png") };
+		KillCounter.timesTexture = new Texture("res/sprites/ui/kill_count/times.png");
+		KillCounter.iconTexture = new Texture("res/sprites/ui/kill_count/icon.png");
+		KillCounter.counterTextures = new Texture[] { new Texture("res/sprites/ui/kill_count/0.png"), new Texture("res/sprites/ui/kill_count/1.png"), new Texture("res/sprites/ui/kill_count/2.png"), new Texture("res/sprites/ui/kill_count/3.png"), new Texture("res/sprites/ui/kill_count/4.png"), new Texture("res/sprites/ui/kill_count/5.png"), new Texture("res/sprites/ui/kill_count/6.png"), new Texture("res/sprites/ui/kill_count/7.png"), new Texture("res/sprites/ui/kill_count/8.png"), new Texture("res/sprites/ui/kill_count/9.png") };
 		Map.wallTexture = new Texture("res/sprites/tiles/brick_wall.png");
 		Map.floorTexture = new Texture("res/sprites/tiles/tile_floor_0.png");
 	}
@@ -73,10 +73,10 @@ public class MainView extends EnigView {
 		
 
 		if (UserControls.test(window))
-			if (DeathCounter.deaths >= 9)
+			if (KillCounter.deaths >= 9)
 				gameOver();
 			else
-				DeathCounter.deaths++;
+				KillCounter.deaths++;
 
 		renderScene();
 
@@ -116,7 +116,7 @@ public class MainView extends EnigView {
 		playerVAO.drawTriangles();
 		Parent.renderParents(mainMap.parents, playerVAO);
 		Child.renderParents(mainMap.children, playerVAO);
-		DeathCounter.renderCounter(deathCounter, playerVAO);
+		KillCounter.renderCounter(deathCounter, playerVAO);
 		playerVAO.unbind();
 
 
