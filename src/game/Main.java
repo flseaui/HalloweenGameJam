@@ -12,12 +12,8 @@ public class Main {
 		Shaders.createMainShaders();
 		screenObj = new VAO(-1, -1, 2, 2);
 		window.fps = 60;
-		//MainView.main = new MainView(window);
-		//MainView.main.runLoop();
-		SteamView snokeView = new SteamView(window);
-		snokeView.runLoop();
-		//PerlinView view = new PerlinView(window);
-		//view.runLoop();
+		MainView.main = new MainView(window);
+		MainView.main.runLoop();
 		window.terminate();
 	}
 }
