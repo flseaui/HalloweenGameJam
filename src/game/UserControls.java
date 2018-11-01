@@ -9,6 +9,12 @@ public class UserControls {
 	public static int[] right = new int[] {GLFW_KEY_D};
 	public static int[] down = new int[] {GLFW_KEY_S};
 	public static int[] up = new int[] {GLFW_KEY_W};
+	
+	public static int cleft = GLFW_KEY_LEFT;
+	public static int cright = GLFW_KEY_RIGHT;
+	public static int cdown = GLFW_KEY_DOWN;
+	public static int cup = GLFW_KEY_UP;
+	
 	public static int[] pause = new int[] {GLFW_KEY_P};
 	public static int[] test = new int[] {GLFW_KEY_SPACE};
 	public static int[] quit = new int[] {GLFW_KEY_ESCAPE};

@@ -78,7 +78,7 @@ public class Parent {
 	public static void renderParents(Parent[] parents, VAO vao) {
 		tex.bind();
 		for (Parent p: parents) {
-			textureShader.shaders[0].uniforms[0].set(new Matrix4f(MainView.perspectiveMatrix).translate(p.x * 10f, p.y * 10f, 0));
+			textureShader.shaders[0].uniforms[0].set(MainView.getPerspectiveMatrix().translate(p.x * 10f, p.y * 10f, 0));
 			vao.drawTriangles();
 		}
 	}

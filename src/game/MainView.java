@@ -6,9 +6,13 @@ import engine.OpenAL.SoundSource;
 import engine.OpenGL.*;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import java.awt.*;
+
 import static game.Shaders.textureShader;
+import static game.UserControls.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -39,6 +43,9 @@ public class MainView extends EnigView {
 	public boolean carTime;
 	public int carX, carY;
 
+
+	public static Vector2f camPos = new Vector2f();
+
 	public MainView(EnigWindow window) {
 		super(window);
 		glDisable(GL_DEPTH_TEST);
@@ -61,13 +68,23 @@ public class MainView extends EnigView {
 		mainTheme = new Sound("res/mainTheme.wav");
 		soundSource.setLoop();
 		soundSource.playSound(mainTheme);
+		Map.wallTexture = new Texture("res/sprites/tiles/brick_wall.png");
+		Map.floorTexture = new Texture("res/sprites/tiles/tile_floor_0.png");
 	}
 	
 	@Override
 	public boolean loop() {
 		++frame;
-
+		
 		mainPlayer.checkMovement(window);
+		updateCameraPos(window);
+
+		if (frame % window.fps == 0) {
+			for (Parent p : mainMap.parents) {
+				p.move(mainMap);
+			}
+		}
+
 
 		if (UserControls.test(window))
 			if (DeathCounter.deaths >= 9)
@@ -107,11 +124,15 @@ public class MainView extends EnigView {
 
 	private void renderScene() {
 		FBO.prepareDefaultRender();
+
 		textureShader.enable();
+		playerVAO.prepareRender();
+
+		mainMap.render(playerVAO);
 
 		playerTex[Math.abs(2 * frame / window.fps % 2)].bind();
-		textureShader.shaders[0].uniforms[0].set(new Matrix4f(perspectiveMatrix).translate(mainPlayer.x * 10f, mainPlayer.y * 10f, 0));
-		playerVAO.prepareRender();
+		textureShader.shaders[0].uniforms[0].set(getPerspectiveMatrix().translate(mainPlayer.x * 10f, mainPlayer.y * 10f, 0));
+
 		playerVAO.drawTriangles();
 		Parent.renderParents(mainMap.parents, playerVAO);
 		Child.renderParents(mainMap.children, playerVAO);
@@ -152,7 +173,22 @@ public class MainView extends EnigView {
 		}
 	}
 	
+	public static void updateCameraPos(EnigWindow w) {
+		if (w.keys[cup] > 0) {
+			camPos.y -= 0.5f;
+		}
+		if (w.keys[cdown] > 0) {
+			camPos.y += 0.5f;
+		}
+		if (w.keys[cleft] > 0) {
+			camPos.x += 0.5f;
+		}
+		if (w.keys[cright] > 0) {
+			camPos.x -= 0.5f;
+		}
+	}
+
 	public static Matrix4f getPerspectiveMatrix() {
-		return new Matrix4f(perspectiveMatrix);
+		return new Matrix4f(perspectiveMatrix).translate(camPos.x, camPos.y, 0);
 	}
 }
