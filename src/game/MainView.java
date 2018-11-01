@@ -6,6 +6,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
+import static game.Shaders.textureShader;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -16,15 +17,25 @@ public class MainView extends EnigView {
 	public static VAO playerVAO;
 	public static Matrix4f perspectiveMatrix;
 	
+	public static Player mainPlayer;
+	public static Texture[] playerTex;
+	
+	public static int frame;
+	
 	public MainView(EnigWindow window) {
 		super(window);
-		playerVAO = new VAO(-5, -10, 10, 20);
-		perspectiveMatrix = window.getSquarePerspectiveMatrix(150f);
 		glDisable(GL_DEPTH_TEST);
+		playerVAO = new VAO(-5, -5, 10, 10);
+		perspectiveMatrix = window.getSquarePerspectiveMatrix(150f);
+		mainPlayer = new Player();
+		playerTex = new Texture[]{new Texture("res/sprites/player/player0.png"), new Texture("res/sprites/player/player1.png")};
 	}
 	
 	@Override
 	public boolean loop() {
+		++frame;
+		
+		mainPlayer.checkMovement(window);
 		
 		renderScene();
 		
@@ -36,7 +47,10 @@ public class MainView extends EnigView {
 	
 	private void renderScene() {
 		FBO.prepareDefaultRender();
-		
+		textureShader.enable();
+		playerTex[(2 * frame / window.fps % 2)].bind();
+		textureShader.shaders[0].uniforms[0].set(new Matrix4f(perspectiveMatrix).translate(mainPlayer.x * 10f, mainPlayer.y * 10f, 0));
+		playerVAO.fullRender();
 	}
 	
 	public static Matrix4f getPerspectiveMatrix() {

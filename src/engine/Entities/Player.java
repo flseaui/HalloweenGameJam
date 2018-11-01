@@ -86,12 +86,12 @@ public class Player extends Camera {
 	 * @param w window to get controls
 	 */
 	public void updatePosition(PlatformSegment plane, EnigWindow w) {
-		if (UserControls.forward(w)) {
+		/*if (UserControls.forward(w)) {
 			moveAlongPlane(getRotated2DVector(0f, -1f, 1), plane);
 		}else if (UserControls.backward(w)) {
 			moveAlongPlane(getRotated2DVector(0f, 1f, 1), plane);
 		}
-		
+		*/
 		if (UserControls.left(w)) {
 			moveAlongPlane(getRotated2DVector(-1f, 0, 1), plane);
 		}else if (UserControls.right(w)) {
