@@ -1,0 +1,21 @@
+#version 330 core
+
+uniform vec4 offset;
+uniform sampler2D textureSampler;
+uniform sampler2D noiseSampler;
+
+in vec2 texCoords;
+
+out vec4 color;
+
+void main() {
+    /*color = texture(textureSampler, vec2(texCoords.x, 1 - texCoords.y));
+    color += texture(noiseSampler, vec2(texCoords.x, 1 - texCoords.y + offset)) * 0.03;
+    color.w = 1;
+    if (color.x > 1) {
+        color.x -= 1;
+        color.y -= 1;
+        color.z -= 1;
+    }*/
+    color = texture(textureSampler, vec2(texCoords.x + offset.x, 1 - texCoords.y + offset.y)) * 0.5 + texture(noiseSampler, vec2(texCoords.x + offset.z, 1 - texCoords.y + offset.w));
+}

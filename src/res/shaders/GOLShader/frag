@@ -1,0 +1,31 @@
+#version 330 core
+
+uniform vec2 sourcePos;
+uniform vec2 pixOffset;
+uniform sampler2D textureSampler;
+
+in vec2 texCoords;
+
+out vec4 color;
+//0.01
+void main() {
+    float up = texture(textureSampler, vec2(texCoords.x, 1 - texCoords.y + pixOffset.y)).w;
+    float down = texture(textureSampler, vec2(texCoords.x, 1 - texCoords.y - pixOffset.y)).w;
+    float left = texture(textureSampler, vec2(texCoords.x - pixOffset.x, 1 - texCoords.y)).w;
+    float right = texture(textureSampler, vec2(texCoords.x + pixOffset.x, 1 - texCoords.y)).w;
+    float center = texture(textureSampler, vec2(texCoords.x, 1 - texCoords.y)).w;
+    float score = up + down + left + right;
+    score += texture(textureSampler, vec2(texCoords.x - pixOffset.x, 1 - texCoords.y + pixOffset.y)).w;
+    score += texture(textureSampler, vec2(texCoords.x + pixOffset.x, 1 - texCoords.y + pixOffset.y)).w;
+    score += texture(textureSampler, vec2(texCoords.x - pixOffset.x, 1 - texCoords.y - pixOffset.y)).w;
+    score += texture(textureSampler, vec2(texCoords.x + pixOffset.x, 1 - texCoords.y - pixOffset.y)).w;
+    if (score < 1.9) {
+        color = vec4(0, 0, 0, 0);
+    }else if (score > 3.9) {
+        color = vec4(0, 0, 0, 0);
+    }else if (score > 2.9) {
+        color = vec4(1, 1, 1, 1);
+    }else {
+        color = vec4(1, 1, 1, center);
+    }
+}
