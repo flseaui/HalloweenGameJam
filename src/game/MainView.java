@@ -58,6 +58,7 @@ public class MainView extends EnigView {
 		playerTex = new Texture[] {new Texture("res/sprites/player/player0.png"), new Texture("res/sprites/player/player1.png")};
 		ghostBustersCar = new Texture("res/sprites/ghostbusters_car.png");
 		Child.childTex = new Texture[] {new Texture("res/sprites/child/idle/idle_0.png"), new Texture("res/sprites/child/idle/idle_1.png"), new Texture("res/sprites/child/idle/idle_2.png"), new Texture("res/sprites/child/idle/idle_2.png")};
+		Child.childKillTextures = new Texture[] { new Texture("res/sprites/child/dying/death_0.png"), new Texture("res/sprites/child/dying/death_1.png"), new Texture("res/sprites/child/dying/death_2.png"), new Texture("res/sprites/child/dying/death_3.png"), new Texture("res/sprites/child/dying/death_4.png"), new Texture("res/sprites/child/dying/death_5.png"), new Texture("res/sprites/child/dying/death_6.png"), new Texture("res/sprites/child/dying/death_7.png"), new Texture("res/sprites/child/dying/death_8.png"), new Texture("res/sprites/child/dying/death_9.png"), new Texture("res/sprites/child/dying/death_10.png"), new Texture("res/sprites/child/dying/death_11.png"), new Texture("res/sprites/child/dying/death_12.png") };
 		Parent.tex = new Texture("res/sprites/parent/walk_down/walk_down_0.png");
 		KillCounter.timesTexture = new Texture("res/sprites/ui/kill_count/times.png");
 		KillCounter.iconTexture = new Texture("res/sprites/ui/kill_count/icon.png");
@@ -92,12 +93,14 @@ public class MainView extends EnigView {
 
 		for (Child child : mainMap.children)
 		{
-			if (!child.dead) {
-				if (mainPlayer.x == child.x && mainPlayer.y == child.y) {
-					if (KillCounter.deaths >= 9)
-						win();
-					else
-						KillCounter.deaths++;
+			if (child.dead) continue;
+
+			if (mainPlayer.x == child.x && mainPlayer.y == child.y) {
+				if (KillCounter.deaths >= 9)
+					win();
+				else {
+					KillCounter.deaths++;
+					child.dead = true;
 				}
 			}
 		}

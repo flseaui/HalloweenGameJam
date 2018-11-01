@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class Main {
 	public static VAO screenObj;
 	public static void main(String[] args) {
-		EnigWindow window = new EnigWindow("Ghost Coaster");
+		EnigWindow window = new EnigWindow(1920, 1080,"Ghost Coaster");
 		Shaders.createMainShaders();
 		screenObj = new VAO(-1, -1, 2, 2); 
 		window.fps = 60;

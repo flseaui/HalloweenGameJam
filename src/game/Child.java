@@ -11,21 +11,33 @@ public class Child {
 	public int y;
 	
 	public static Texture[] childTex;
+	public static Texture[] childKillTextures;
 
 	public boolean dead;
+
+	public boolean fullyDead;
 
 	public Child(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
 	
-	public static void renderChildren(Child[] parents, VAO vao) {
-		childTex[Math.abs(3 * MainView.frame / MainView.main.window.fps % 4 - 1)].bind();
-		for (Child p: parents) {
-			if (!p.dead) {
-				textureShader.shaders[0].uniforms[0].set(MainView.getPerspectiveMatrix().translate(p.x * 10f, p.y * 10f, 0));
-				vao.drawTriangles();
+	public static void renderChildren(Child[] children, VAO vao) {
+		for (Child child: children) {
+			if (child.fullyDead) continue;
+
+			if (child.dead) {
+				int index = Math.abs(12 * MainView.frame / MainView.main.window.fps % 13 - 1);
+				if (index == 11)
+					child.fullyDead = true;
+				childKillTextures[index].bind();
 			}
+			else
+			{
+				childTex[Math.abs(3 * MainView.frame / MainView.main.window.fps % 4 - 1)].bind();
+			}
+			textureShader.shaders[0].uniforms[0].set(MainView.getPerspectiveMatrix().translate(child.x * 10f, child.y * 10f, 0));
+			vao.drawTriangles();
 		}
 	}
 }
