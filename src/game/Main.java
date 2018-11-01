@@ -13,6 +13,7 @@ public class Main {
 		screenObj = new VAO(-1, -1, 2, 2);
 		window.fps = 60;
 		MainView.main = new MainView(window);
+		MainView.setAspectRatio(1f);
 		MainView.main.runLoop();
 		window.terminate();
 	}

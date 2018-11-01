@@ -4,6 +4,7 @@ import engine.OpenGL.EnigWindow;
 import engine.OpenGL.ShaderProgram;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.glViewport;
 
 public abstract class EnigView {
 	public EnigWindow window;
@@ -60,4 +61,14 @@ public abstract class EnigView {
 	 * does any neccisary cleanup
 	 */
 	public void setDown() {};
+	
+	/**
+	 * hehe sten.
+	 * sets the viewport....
+	 * BUT ONLY THE VIEWPORT
+	 * @author Emmett
+	 */
+	public void ebetSetSize(int x, int y, int w, int h) {
+		glViewport(x,y,w,h);
+	}
 }
