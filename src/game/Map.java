@@ -55,6 +55,8 @@ public class Map {
 				} else if (array[i] == 0xff0000ff) {
 					tiles[i % b.getWidth()][i / b.getHeight()] = 0xffffffff;
 					childrenTemp.add(new Child(i % b.getWidth(), i / b.getHeight()));
+				} else if (array[i] == 0xff00ff00) {
+					tiles[i % b.getWidth()][i / b.getHeight()] = 0xffffffff;
 				} else {
 					tiles[i % b.getWidth()][i / b.getHeight()] = array[i];
 				}
