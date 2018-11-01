@@ -26,7 +26,7 @@ public class MainView extends EnigView {
 	public static Player mainPlayer;
 	public static Map mainMap;
 
-	public static DeathCounter deathCounter;
+	public static KillCounter deathCounter;
 
 	public static Texture[] playerTex;
 	public static Texture ghostBustersCar;
@@ -43,9 +43,9 @@ public class MainView extends EnigView {
 	public boolean carTime;
 	public int carX, carY;
 
-
+	
 	public static Vector2f camPos = new Vector2f();
-
+	
 	public MainView(EnigWindow window) {
 		super(window);
 		glDisable(GL_DEPTH_TEST);
@@ -54,14 +54,19 @@ public class MainView extends EnigView {
 		perspectiveMatrix = window.getSquarePerspectiveMatrix(150f);
 		mainPlayer = new Player();
 		mainMap = new Map("res/levels/level0.png");
-		deathCounter = new DeathCounter();
+		deathCounter = new KillCounter();
 		playerTex = new Texture[] {new Texture("res/sprites/player/player0.png"), new Texture("res/sprites/player/player1.png")};
 		ghostBustersCar = new Texture("res/sprites/ghostbusters_car.png");
 		Child.childTex = new Texture[] {new Texture("res/sprites/child/idle/idle_0.png"), new Texture("res/sprites/child/idle/idle_1.png"), new Texture("res/sprites/child/idle/idle_2.png"), new Texture("res/sprites/child/idle/idle_2.png")};
 		Parent.tex = new Texture("res/sprites/parent/walk_down/walk_down_0.png");
-		DeathCounter.timesTexture = new Texture("res/sprites/ui/kill_count/times.png");
-		DeathCounter.iconTexture = new Texture("res/sprites/ui/kill_count/icon.png");
-		DeathCounter.counterTextures = new Texture[] { new Texture("res/sprites/ui/kill_count/0.png"), new Texture("res/sprites/ui/kill_count/1.png"), new Texture("res/sprites/ui/kill_count/2.png"), new Texture("res/sprites/ui/kill_count/3.png"), new Texture("res/sprites/ui/kill_count/4.png"), new Texture("res/sprites/ui/kill_count/5.png"), new Texture("res/sprites/ui/kill_count/6.png"), new Texture("res/sprites/ui/kill_count/7.png"), new Texture("res/sprites/ui/kill_count/8.png"), new Texture("res/sprites/ui/kill_count/9.png") };
+		KillCounter.timesTexture = new Texture("res/sprites/ui/kill_count/times.png");
+		KillCounter.iconTexture = new Texture("res/sprites/ui/kill_count/icon.png");
+		KillCounter.counterTextures = new Texture[] { new Texture("res/sprites/ui/kill_count/0.png"), new Texture("res/sprites/ui/kill_count/1.png"), new Texture("res/sprites/ui/kill_count/2.png"), new Texture("res/sprites/ui/kill_count/3.png"), new Texture("res/sprites/ui/kill_count/4.png"), new Texture("res/sprites/ui/kill_count/5.png"), new Texture("res/sprites/ui/kill_count/6.png"), new Texture("res/sprites/ui/kill_count/7.png"), new Texture("res/sprites/ui/kill_count/8.png"), new Texture("res/sprites/ui/kill_count/9.png") };
+		Map.wallTexture = new Texture("res/sprites/tiles/stone_wall.png");
+		Map.floorTexture = new Texture("res/sprites/tiles/dark_oak_floor.png");
+		KillCounter.timesTexture = new Texture("res/sprites/ui/kill_count/times.png");
+		KillCounter.iconTexture = new Texture("res/sprites/ui/kill_count/icon.png");
+		KillCounter.counterTextures = new Texture[] { new Texture("res/sprites/ui/kill_count/0.png"), new Texture("res/sprites/ui/kill_count/1.png"), new Texture("res/sprites/ui/kill_count/2.png"), new Texture("res/sprites/ui/kill_count/3.png"), new Texture("res/sprites/ui/kill_count/4.png"), new Texture("res/sprites/ui/kill_count/5.png"), new Texture("res/sprites/ui/kill_count/6.png"), new Texture("res/sprites/ui/kill_count/7.png"), new Texture("res/sprites/ui/kill_count/8.png"), new Texture("res/sprites/ui/kill_count/9.png") };
 
 		soundSource = new SoundSource();
 		gameOverTheme = new Sound("res/bustTheme.wav");
@@ -89,19 +94,19 @@ public class MainView extends EnigView {
 		{
 			if (!child.dead) {
 				if (mainPlayer.x == child.x && mainPlayer.y == child.y) {
-					if (DeathCounter.deaths >= 9)
+					if (KillCounter.deaths >= 9)
 						win();
 					else
-						DeathCounter.deaths++;
+						KillCounter.deaths++;
 				}
 			}
 		}
 
 		if (UserControls.test(window))
-			if (DeathCounter.deaths >= 9)
+			if (KillCounter.deaths >= 9)
 				gameOver();
 			else
-				DeathCounter.deaths++;
+				KillCounter.deaths++;
 
 		renderScene();
 
@@ -141,19 +146,21 @@ public class MainView extends EnigView {
 
 	private void renderScene() {
 		FBO.prepareDefaultRender();
-
+		
 		textureShader.enable();
 		playerVAO.prepareRender();
-
+		
 		mainMap.render(playerVAO);
-
+		
 		playerTex[Math.abs(2 * frame / window.fps % 2)].bind();
 		textureShader.shaders[0].uniforms[0].set(getPerspectiveMatrix().translate(mainPlayer.x * 10f, mainPlayer.y * 10f, 0));
-
+		
 		playerVAO.drawTriangles();
 		Parent.renderParents(mainMap.parents, playerVAO);
 		Child.renderChildren(mainMap.children, playerVAO);
-		DeathCounter.renderCounter(deathCounter, playerVAO);
+		KillCounter.renderCounter(deathCounter, playerVAO);
+		Child.renderChildren(mainMap.children, playerVAO);
+		KillCounter.renderCounter(deathCounter, playerVAO);
 		playerVAO.unbind();
 
 
@@ -191,17 +198,18 @@ public class MainView extends EnigView {
 	}
 	
 	public static void updateCameraPos(EnigWindow w) {
+		final float SPEED = 1;
 		if (w.keys[cup] > 0) {
-			camPos.y -= 0.5f;
+			camPos.y -= SPEED;
 		}
 		if (w.keys[cdown] > 0) {
-			camPos.y += 0.5f;
+			camPos.y += SPEED;
 		}
 		if (w.keys[cleft] > 0) {
-			camPos.x += 0.5f;
+			camPos.x += SPEED;
 		}
 		if (w.keys[cright] > 0) {
-			camPos.x -= 0.5f;
+			camPos.x -= SPEED;
 		}
 	}
 
