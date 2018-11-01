@@ -7,6 +7,9 @@ out/
 .idea/**/dictionaries
 .idea/**/shelf
 
+.project
+.classpath
+
 bin/
 
 .DS_Store
