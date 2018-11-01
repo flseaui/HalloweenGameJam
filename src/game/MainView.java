@@ -1,6 +1,8 @@
 package game;
 
 import engine.*;
+import engine.OpenAL.Sound;
+import engine.OpenAL.SoundSource;
 import engine.OpenGL.*;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -29,6 +31,12 @@ public class MainView extends EnigView {
 	public static Texture[] playerTex;
 	public static Texture ghostBustersCar;
 
+	public Sound mainTheme;
+	public Sound gameOverTheme;
+
+	public SoundSource soundSource;
+
+
 	public static int frame;
 	public static float aspectRatio;
 
@@ -56,6 +64,17 @@ public class MainView extends EnigView {
 		KillCounter.counterTextures = new Texture[] { new Texture("res/sprites/ui/kill_count/0.png"), new Texture("res/sprites/ui/kill_count/1.png"), new Texture("res/sprites/ui/kill_count/2.png"), new Texture("res/sprites/ui/kill_count/3.png"), new Texture("res/sprites/ui/kill_count/4.png"), new Texture("res/sprites/ui/kill_count/5.png"), new Texture("res/sprites/ui/kill_count/6.png"), new Texture("res/sprites/ui/kill_count/7.png"), new Texture("res/sprites/ui/kill_count/8.png"), new Texture("res/sprites/ui/kill_count/9.png") };
 		Map.wallTexture = new Texture("res/sprites/tiles/stone_wall.png");
 		Map.floorTexture = new Texture("res/sprites/tiles/dark_oak_floor.png");
+		KillCounter.timesTexture = new Texture("res/sprites/ui/kill_count/times.png");
+		KillCounter.iconTexture = new Texture("res/sprites/ui/kill_count/icon.png");
+		KillCounter.counterTextures = new Texture[] { new Texture("res/sprites/ui/kill_count/0.png"), new Texture("res/sprites/ui/kill_count/1.png"), new Texture("res/sprites/ui/kill_count/2.png"), new Texture("res/sprites/ui/kill_count/3.png"), new Texture("res/sprites/ui/kill_count/4.png"), new Texture("res/sprites/ui/kill_count/5.png"), new Texture("res/sprites/ui/kill_count/6.png"), new Texture("res/sprites/ui/kill_count/7.png"), new Texture("res/sprites/ui/kill_count/8.png"), new Texture("res/sprites/ui/kill_count/9.png") };
+
+		soundSource = new SoundSource();
+		gameOverTheme = new Sound("res/bustTheme.wav");
+		mainTheme = new Sound("res/mainTheme.wav");
+		soundSource.setLoop();
+		soundSource.playSound(mainTheme);
+		Map.wallTexture = new Texture("res/sprites/tiles/brick_wall.png");
+		Map.floorTexture = new Texture("res/sprites/tiles/tile_floor_0.png");
 	}
 	
 	@Override
@@ -64,13 +83,24 @@ public class MainView extends EnigView {
 		
 		mainPlayer.checkMovement(window);
 		updateCameraPos(window);
-		
+
 		if (frame % window.fps == 0) {
 			for (Parent p : mainMap.parents) {
 				p.move(mainMap);
 			}
 		}
-		
+
+		for (Child child : mainMap.children)
+		{
+			if (!child.dead) {
+				if (mainPlayer.x == child.x && mainPlayer.y == child.y) {
+					if (KillCounter.deaths >= 9)
+						win();
+					else
+						KillCounter.deaths++;
+				}
+			}
+		}
 
 		if (UserControls.test(window))
 			if (KillCounter.deaths >= 9)
@@ -97,8 +127,20 @@ public class MainView extends EnigView {
 		aspectRatio = aspect;
 	}
 
+	public void win()
+	{
+
+	}
+
 	public void gameOver()
 	{
+
+		carX = mainPlayer.x * 10 - 30;
+		carY = mainPlayer.y * 10 - 15;
+
+		soundSource.stop();
+		soundSource.setNoLoop();
+		soundSource.playSound(gameOverTheme);
 		carTime = true;
 	}
 
@@ -115,7 +157,9 @@ public class MainView extends EnigView {
 		
 		playerVAO.drawTriangles();
 		Parent.renderParents(mainMap.parents, playerVAO);
-		Child.renderParents(mainMap.children, playerVAO);
+		Child.renderChildren(mainMap.children, playerVAO);
+		KillCounter.renderCounter(deathCounter, playerVAO);
+		Child.renderChildren(mainMap.children, playerVAO);
 		KillCounter.renderCounter(deathCounter, playerVAO);
 		playerVAO.unbind();
 
@@ -168,7 +212,7 @@ public class MainView extends EnigView {
 			camPos.x -= SPEED;
 		}
 	}
-	
+
 	public static Matrix4f getPerspectiveMatrix() {
 		return new Matrix4f(perspectiveMatrix).translate(camPos.x, camPos.y, 0);
 	}
