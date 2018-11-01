@@ -54,8 +54,8 @@ public class MainView extends EnigView {
 		KillCounter.timesTexture = new Texture("res/sprites/ui/kill_count/times.png");
 		KillCounter.iconTexture = new Texture("res/sprites/ui/kill_count/icon.png");
 		KillCounter.counterTextures = new Texture[] { new Texture("res/sprites/ui/kill_count/0.png"), new Texture("res/sprites/ui/kill_count/1.png"), new Texture("res/sprites/ui/kill_count/2.png"), new Texture("res/sprites/ui/kill_count/3.png"), new Texture("res/sprites/ui/kill_count/4.png"), new Texture("res/sprites/ui/kill_count/5.png"), new Texture("res/sprites/ui/kill_count/6.png"), new Texture("res/sprites/ui/kill_count/7.png"), new Texture("res/sprites/ui/kill_count/8.png"), new Texture("res/sprites/ui/kill_count/9.png") };
-		Map.wallTexture = new Texture("res/sprites/tiles/brick_wall.png");
-		Map.floorTexture = new Texture("res/sprites/tiles/tile_floor_0.png");
+		Map.wallTexture = new Texture("res/sprites/tiles/stone_wall.png");
+		Map.floorTexture = new Texture("res/sprites/tiles/dark_oak_floor.png");
 	}
 	
 	@Override
@@ -154,17 +154,18 @@ public class MainView extends EnigView {
 	}
 	
 	public static void updateCameraPos(EnigWindow w) {
+		final float SPEED = 1;
 		if (w.keys[cup] > 0) {
-			camPos.y -= 0.5f;
+			camPos.y -= SPEED;
 		}
 		if (w.keys[cdown] > 0) {
-			camPos.y += 0.5f;
+			camPos.y += SPEED;
 		}
 		if (w.keys[cleft] > 0) {
-			camPos.x += 0.5f;
+			camPos.x += SPEED;
 		}
 		if (w.keys[cright] > 0) {
-			camPos.x -= 0.5f;
+			camPos.x -= SPEED;
 		}
 	}
 	

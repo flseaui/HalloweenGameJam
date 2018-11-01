@@ -25,5 +25,4 @@ public class KillCounter {
         textureShader.shaders[0].uniforms[0].set(new Matrix4f(MainView.perspectiveMatrix).translate(-107, 69, 0));
         vao.drawTriangles();
     }
-
 }
