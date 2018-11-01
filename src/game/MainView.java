@@ -85,6 +85,17 @@ public class MainView extends EnigView {
 			}
 		}
 
+		for (Child child : mainMap.children)
+		{
+			if (!child.dead) {
+				if (mainPlayer.x == child.x && mainPlayer.y == child.y) {
+					if (DeathCounter.deaths >= 9)
+						win();
+					else
+						DeathCounter.deaths++;
+				}
+			}
+		}
 
 		if (UserControls.test(window))
 			if (DeathCounter.deaths >= 9)
@@ -111,13 +122,19 @@ public class MainView extends EnigView {
 		aspectRatio = aspect;
 	}
 
+	public void win()
+	{
+
+	}
+
 	public void gameOver()
 	{
 
 		carX = mainPlayer.x * 10 - 30;
 		carY = mainPlayer.y * 10 - 15;
-		soundSource.setNoLoop();
+
 		soundSource.stop();
+		soundSource.setNoLoop();
 		soundSource.playSound(gameOverTheme);
 		carTime = true;
 	}
@@ -135,7 +152,7 @@ public class MainView extends EnigView {
 
 		playerVAO.drawTriangles();
 		Parent.renderParents(mainMap.parents, playerVAO);
-		Child.renderParents(mainMap.children, playerVAO);
+		Child.renderChildren(mainMap.children, playerVAO);
 		DeathCounter.renderCounter(deathCounter, playerVAO);
 		playerVAO.unbind();
 

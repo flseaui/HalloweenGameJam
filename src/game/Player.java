@@ -20,4 +20,5 @@ public class Player {
 			x += 1;
 		}
 	}
+
 }
