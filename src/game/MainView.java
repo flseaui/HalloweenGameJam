@@ -1,6 +1,8 @@
 package game;
 
 import engine.*;
+import engine.OpenAL.Sound;
+import engine.OpenAL.SoundSource;
 import engine.OpenGL.*;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -25,6 +27,12 @@ public class MainView extends EnigView {
 	public static Texture[] playerTex;
 	public static Texture ghostBustersCar;
 
+	public Sound mainTheme;
+	public Sound gameOverTheme;
+
+	public SoundSource soundSource;
+
+
 	public static int frame;
 	public static float aspectRatio;
 
@@ -47,12 +55,18 @@ public class MainView extends EnigView {
 		DeathCounter.timesTexture = new Texture("res/sprites/ui/kill_count/times.png");
 		DeathCounter.iconTexture = new Texture("res/sprites/ui/kill_count/icon.png");
 		DeathCounter.counterTextures = new Texture[] { new Texture("res/sprites/ui/kill_count/0.png"), new Texture("res/sprites/ui/kill_count/1.png"), new Texture("res/sprites/ui/kill_count/2.png"), new Texture("res/sprites/ui/kill_count/3.png"), new Texture("res/sprites/ui/kill_count/4.png"), new Texture("res/sprites/ui/kill_count/5.png"), new Texture("res/sprites/ui/kill_count/6.png"), new Texture("res/sprites/ui/kill_count/7.png"), new Texture("res/sprites/ui/kill_count/8.png"), new Texture("res/sprites/ui/kill_count/9.png") };
+
+		soundSource = new SoundSource();
+		gameOverTheme = new Sound("res/bustTheme.wav");
+		mainTheme = new Sound("res/mainTheme.wav");
+		soundSource.setLoop();
+		soundSource.playSound(mainTheme);
 	}
 	
 	@Override
 	public boolean loop() {
 		++frame;
-		
+
 		mainPlayer.checkMovement(window);
 
 		if (UserControls.test(window))
@@ -82,6 +96,12 @@ public class MainView extends EnigView {
 
 	public void gameOver()
 	{
+
+		carX = mainPlayer.x * 10 - 30;
+		carY = mainPlayer.y * 10 - 15;
+		soundSource.setNoLoop();
+		soundSource.stop();
+		soundSource.playSound(gameOverTheme);
 		carTime = true;
 	}
 
