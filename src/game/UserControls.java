@@ -10,6 +10,7 @@ public class UserControls {
 	public static int[] down = new int[] {GLFW_KEY_S};
 	public static int[] up = new int[] {GLFW_KEY_W};
 	public static int[] pause = new int[] {GLFW_KEY_P};
+	public static int[] test = new int[] {GLFW_KEY_SPACE};
 	public static int[] quit = new int[] {GLFW_KEY_ESCAPE};
 	public static float sensitivity = 1f/500f;
 
@@ -53,6 +54,16 @@ public class UserControls {
 		}
 		return false;
 	}
+
+	public static boolean test(EnigWindow window) {
+		for (int i:test) {
+			if (window.keys[i] == 1) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static boolean quit(EnigWindow window) {
 		for (int i:quit) {
 			if (window.keys[i] == 1) {

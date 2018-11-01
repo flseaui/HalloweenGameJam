@@ -14,27 +14,39 @@ public class MainView extends EnigView {
 	public static MainView main;
 	
 	//project variables
-	public static VAO playerVAO;
+	public static VAO playerVAO, carVAO;
 	public static Matrix4f perspectiveMatrix;
 	
 	public static Player mainPlayer;
 	public static Map mainMap;
-	
+
+	public static DeathCounter deathCounter;
+
 	public static Texture[] playerTex;
-	
+	public static Texture ghostBustersCar;
+
 	public static int frame;
 	public static float aspectRatio;
-	
+
+	public boolean carTime;
+	public int carX, carY;
+
 	public MainView(EnigWindow window) {
 		super(window);
 		glDisable(GL_DEPTH_TEST);
 		playerVAO = new VAO(-5, -5, 10, 10);
+		carVAO = new VAO(-5, -5, 60, 30);
 		perspectiveMatrix = window.getSquarePerspectiveMatrix(150f);
 		mainPlayer = new Player();
 		mainMap = new Map("res/levels/level0.png");
+		deathCounter = new DeathCounter();
 		playerTex = new Texture[] {new Texture("res/sprites/player/player0.png"), new Texture("res/sprites/player/player1.png")};
+		ghostBustersCar = new Texture("res/sprites/ghostbusters_car.png");
 		Child.childTex = new Texture[] {new Texture("res/sprites/child/idle/idle_0.png"), new Texture("res/sprites/child/idle/idle_1.png"), new Texture("res/sprites/child/idle/idle_2.png"), new Texture("res/sprites/child/idle/idle_2.png")};
 		Parent.tex = new Texture("res/sprites/parent/walk_down/walk_down_0.png");
+		DeathCounter.timesTexture = new Texture("res/sprites/ui/kill_count/times.png");
+		DeathCounter.iconTexture = new Texture("res/sprites/ui/kill_count/icon.png");
+		DeathCounter.counterTextures = new Texture[] { new Texture("res/sprites/ui/kill_count/0.png"), new Texture("res/sprites/ui/kill_count/1.png"), new Texture("res/sprites/ui/kill_count/2.png"), new Texture("res/sprites/ui/kill_count/3.png"), new Texture("res/sprites/ui/kill_count/4.png"), new Texture("res/sprites/ui/kill_count/5.png"), new Texture("res/sprites/ui/kill_count/6.png"), new Texture("res/sprites/ui/kill_count/7.png"), new Texture("res/sprites/ui/kill_count/8.png"), new Texture("res/sprites/ui/kill_count/9.png") };
 	}
 	
 	@Override
@@ -42,9 +54,15 @@ public class MainView extends EnigView {
 		++frame;
 		
 		mainPlayer.checkMovement(window);
-		
+
+		if (UserControls.test(window))
+			if (DeathCounter.deaths >= 9)
+				gameOver();
+			else
+				DeathCounter.deaths++;
+
 		renderScene();
-		
+
 		if (UserControls.quit(window)) {
 			return true;
 		}
@@ -61,19 +79,34 @@ public class MainView extends EnigView {
 	public static void setAspectRatio(float aspect) {
 		aspectRatio = aspect;
 	}
-	
+
+	public void gameOver()
+	{
+		carTime = true;
+	}
+
 	private void renderScene() {
 		FBO.prepareDefaultRender();
 		textureShader.enable();
+
 		playerTex[Math.abs(2 * frame / window.fps % 2)].bind();
 		textureShader.shaders[0].uniforms[0].set(new Matrix4f(perspectiveMatrix).translate(mainPlayer.x * 10f, mainPlayer.y * 10f, 0));
-		
 		playerVAO.prepareRender();
 		playerVAO.drawTriangles();
 		Parent.renderParents(mainMap.parents, playerVAO);
 		Child.renderParents(mainMap.children, playerVAO);
+		DeathCounter.renderCounter(deathCounter, playerVAO);
 		playerVAO.unbind();
-		
+
+
+		if (carTime)
+		{
+			ghostBustersCar.bind();
+			textureShader.shaders[0].uniforms[0].set(new Matrix4f(perspectiveMatrix).translate(carX, carY, 0));
+			carVAO.prepareRender();
+			carVAO.drawTriangles();
+		}
+
 		//Math.abs(3 * frame / window.fps % 4 - 1)
 		
 		

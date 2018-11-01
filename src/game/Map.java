@@ -61,6 +61,8 @@ public class Map {
 			e.printStackTrace();
 		}
 	}
+
+
 	/*public static void render() {
 		for (int x = 0; x < width) {
 		
